@@ -37,13 +37,10 @@ public class FormDataServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doOptions(req, resp);
-
         /** flash @ windows bug */
         req.setCharacterEncoding("utf8");
-
         final PrintWriter writer = resp.getWriter();
         // Check that we have a file upload request
         boolean isMultipart = ServletFileUpload.isMultipartContent(req);
@@ -55,7 +52,6 @@ public class FormDataServlet extends HttpServlet {
         long start = 0;
         boolean success = true;
         String message = "";
-
         ServletFileUpload upload = new ServletFileUpload();
         InputStream in = null;
         String token = null;
@@ -77,16 +73,13 @@ public class FormDataServlet extends HttpServlet {
                     if (token == null || token.trim().length() < 1)
                         token = req.getParameter(TokenServlet.TOKEN_FIELD);
                     /** TODO: validate your token. */
-
                     // 这里不能保证token能有值
                     filename = item.getName();
                     if (token == null || token.trim().length() < 1)
                         token = filename;
-
                     start = IoUtil.streaming(in, token, filename);
                 }
             }
-
             System.out.println("Form Saved : " + filename);
         } catch (FileUploadException fne) {
             success = false;
@@ -99,7 +92,6 @@ public class FormDataServlet extends HttpServlet {
                 json.put(TokenServlet.MESSAGE, message);
             } catch (JSONException e) {
             }
-
             writer.write(json.toString());
             IoUtil.close(in);
             IoUtil.close(writer);

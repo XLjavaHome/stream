@@ -1,5 +1,11 @@
 package cn.twinkling.stream.util;
 
+import cn.twinkling.stream.config.Configurations;
+import cn.twinkling.stream.servlet.FormDataServlet;
+import cn.twinkling.stream.servlet.Range;
+import cn.twinkling.stream.servlet.StreamServlet;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,13 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-import cn.twinkling.stream.config.Configurations;
-import cn.twinkling.stream.servlet.FormDataServlet;
-import cn.twinkling.stream.servlet.Range;
-import cn.twinkling.stream.servlet.StreamServlet;
 
 /**
  * IO--closing, getting file name ... main function method
@@ -39,7 +38,6 @@ public class IoUtil {
             f.getParentFile().mkdirs();
         if (!f.exists())
             f.createNewFile();
-
         return f;
     }
 
@@ -53,20 +51,17 @@ public class IoUtil {
     public static File getTokenedFile(String key) throws IOException {
         if (key == null || key.isEmpty())
             return null;
-
         File f = new File(Configurations.getFileRepository() + File.separator + key);
         if (!f.getParentFile().exists())
             f.getParentFile().mkdirs();
         if (!f.exists())
             f.createNewFile();
-
         return f;
     }
 
     public static void storeToken(String key) throws IOException {
         if (key == null || key.isEmpty())
             return;
-
         File f = new File(Configurations.getFileRepository() + File.separator + key);
         if (!f.getParentFile().exists())
             f.getParentFile().mkdirs();
@@ -101,11 +96,9 @@ public class IoUtil {
             range = m.group().replace("bytes ", "");
             String[] rangeSize = range.split("/");
             String[] fromTo = rangeSize[0].split("-");
-
             long from = Long.parseLong(fromTo[0]);
             long to = Long.parseLong(fromTo[1]);
             long size = Long.parseLong(rangeSize[1]);
-
             return new Range(from, to, size);
         }
         throw new IOException("Illegal Access!");
@@ -119,7 +112,6 @@ public class IoUtil {
         File f = getTokenedFile(key);
         try {
             out = new FileOutputStream(f);
-
             int read = 0;
             final byte[] bytes = new byte[FormDataServlet.BUFFER_LENGTH];
             while ((read = in.read(bytes)) != -1) {
@@ -133,13 +125,11 @@ public class IoUtil {
         File dst = IoUtil.getFile(fileName);
         dst.delete();
         f.renameTo(dst);
-
         long length = getFile(fileName).length();
         /** if `STREAM_DELETE_FINISH`, then delete it. */
         if (Configurations.isDeleteFinished()) {
             dst.delete();
         }
-
         return length;
     }
 }
